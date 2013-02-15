@@ -1,5 +1,5 @@
 /*
- * Copyright © 2012 Blue Brain Project, BBP/EPFL. All rights reserved.
+ * Copyright © 2012-2013 Blue Brain Project, BBP/EPFL. All rights reserved.
  * Copyright © 2012-2013 Inria.  All rights reserved.
  * See COPYING in top-level directory.
  */
@@ -42,11 +42,25 @@ hwloc_gl_query_devices(struct hwloc_gl_backend_data_s *data)
   data->nr_display = 0;
 
   for (i = 0; i < HWLOC_GL_SERVER_MAX; ++i) {
-    for (j = 0; j < HWLOC_GL_SCREEN_MAX; ++j) {
+    Display* display;
+    char displayName[10];
+    int opcode, event, error;
+
+    /* open X server */
+    snprintf(displayName, sizeof(displayName), ":%u", i);
+    display = XOpenDisplay(displayName);
+    if (!display)
+      continue;
+
+    /* Check for NV-CONTROL extension (it's per server) */
+    if(!XQueryExtension(display, "NV-CONTROL", &opcode, &event, &error)) {
+      XCloseDisplay(display);
+      continue;
+    }
+
+    for (j = 0; j < (unsigned) ScreenCount(display); j++) {
       struct hwloc_gl_display_info_s *info = &data->display[data->nr_display];
-      Display* display;
-      int opcode, event, error;
-      int default_screen_number;
+      const int screen = j;
       unsigned int *ptr_binary_data;
       int data_length;
       int gpu_number;
@@ -56,25 +70,17 @@ hwloc_gl_query_devices(struct hwloc_gl_backend_data_s *data)
       int nv_ctrl_pci_func;
       char *productname;
 
-      /* Formulate the display string with the format "[:][x_server][.][x_screen]" */
-      snprintf(info->name, sizeof(info->name), ":%u.%u", i, j);
-      display = XOpenDisplay(info->name);
-      if (!display)
-	continue;
-
-      /* Check for NV-CONTROL extension */
-      if(!XQueryExtension(display, "NV-CONTROL", &opcode, &event, &error))
-	goto next;
-
-      default_screen_number = DefaultScreen(display);
+      /* the server supports NV-CONTROL but it may contain non-NVIDIA screen that don't support it */
+      if (!XNVCTRLIsNvScreen(display, screen))
+        continue;
 
       /* Gets the GPU number attached to the default screen. */
       /* For further details, see the <NVCtrl/NVCtrlLib.h> */
-      err = XNVCTRLQueryTargetBinaryData (display, NV_CTRL_TARGET_TYPE_X_SCREEN, default_screen_number, 0,
-					  NV_CTRL_BINARY_DATA_GPUS_USED_BY_XSCREEN,
-					  (unsigned char **) &ptr_binary_data, &data_length);
+      err = XNVCTRLQueryTargetBinaryData (display, NV_CTRL_TARGET_TYPE_X_SCREEN, screen, 0,
+                                          NV_CTRL_BINARY_DATA_GPUS_USED_BY_XSCREEN,
+                                          (unsigned char **) &ptr_binary_data, &data_length);
       if (!err)
-	goto next;
+        continue;
 
       gpu_number = ptr_binary_data[1];
       free(ptr_binary_data);
@@ -82,34 +88,35 @@ hwloc_gl_query_devices(struct hwloc_gl_backend_data_s *data)
       /* Gets the ID's of the GPU defined by gpu_number
        * For further details, see the <NVCtrl/NVCtrlLib.h> */
       err = XNVCTRLQueryTargetAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					NV_CTRL_PCI_DOMAIN, &nv_ctrl_pci_domain);
+                                        NV_CTRL_PCI_DOMAIN, &nv_ctrl_pci_domain);
       if (!err)
-	goto next;
+        continue;
 
       err = XNVCTRLQueryTargetAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					NV_CTRL_PCI_BUS, &nv_ctrl_pci_bus);
+                                        NV_CTRL_PCI_BUS, &nv_ctrl_pci_bus);
       if (!err)
-	goto next;
+        continue;
 
       err = XNVCTRLQueryTargetAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					NV_CTRL_PCI_DEVICE, &nv_ctrl_pci_device);
+                                        NV_CTRL_PCI_DEVICE, &nv_ctrl_pci_device);
       if (!err)
-	goto next;
+        continue;
 
       err = XNVCTRLQueryTargetAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					NV_CTRL_PCI_DOMAIN, &nv_ctrl_pci_domain);
+                                        NV_CTRL_PCI_DOMAIN, &nv_ctrl_pci_domain);
       if (!err)
-	goto next;
+        continue;
 
       err = XNVCTRLQueryTargetAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					NV_CTRL_PCI_FUNCTION, &nv_ctrl_pci_func);
+                                        NV_CTRL_PCI_FUNCTION, &nv_ctrl_pci_func);
       if (!err)
-	goto next;
+        continue;
 
       productname = NULL;
       err = XNVCTRLQueryTargetStringAttribute(display, NV_CTRL_TARGET_TYPE_GPU, gpu_number, 0,
-					      NV_CTRL_STRING_PRODUCT_NAME, &productname);
+                                              NV_CTRL_STRING_PRODUCT_NAME, &productname);
 
+      snprintf(info->name, sizeof(info->name), ":%u.%u", i, j);
       info->port = i;
       info->device = j;
       info->pcidomain = nv_ctrl_pci_domain;
@@ -123,10 +130,8 @@ hwloc_gl_query_devices(struct hwloc_gl_backend_data_s *data)
 
       /* validate this device */
       data->nr_display++;
-
-    next:
-      XCloseDisplay(display);
     }
+    XCloseDisplay(display);
   }
 }
 
