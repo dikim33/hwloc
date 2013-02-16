@@ -885,12 +885,14 @@ EOF])
             AC_DEFINE([HWLOC_HAVE_GL], [1], [Define to 1 if you have the GL module components.])
 	    HWLOC_GL_LIBS="-lXNVCtrl -lXext -lX11"
 	    AC_SUBST(HWLOC_GL_LIBS)
+	    HWLOC_GL_REQUIRES="xext x11"
             hwloc_have_gl=yes
 	    hwloc_components="$hwloc_components gl"
 	    hwloc_gl_component_maybeplugin=1
 	else
             AS_IF([test "$enable_gl" = "yes"], [
-                AC_MSG_WARN([--enable-gl requested, but GL/X11 support was not found due to a missing component])
+                AC_MSG_WARN([Specified --enable-gl switch, but could not])
+                AC_MSG_WARN([find appropriate support])
                 AC_MSG_ERROR([Cannot continue])
             ])
  	fi      
