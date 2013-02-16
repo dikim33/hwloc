@@ -119,6 +119,10 @@ if HWLOC_HAVE_LINUX
 sources += topology-linux.c
 endif HWLOC_HAVE_LINUX
 
+if HWLOC_HAVE_BGQ
+sources += topology-bgq.c
+endif HWLOC_HAVE_BGQ
+
 if HWLOC_HAVE_AIX
 sources += topology-aix.c
 ldflags += -lpthread
