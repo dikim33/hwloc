@@ -41,7 +41,7 @@ extern "C" {
  *
  * The topology \p topology does not necessarily have to match the current
  * machine. For instance the topology may be an XML import of a remote host.
- * I/O devices detection and the OpenCL component must be enabled in the topology.
+ * I/O devices detection and the GL component must be enabled in the topology.
  *
  * \note The corresponding PCI device object can be obtained by looking
  * at the OS device parent object.
@@ -72,7 +72,7 @@ hwloc_gl_get_display_osdev_by_port_device(hwloc_topology_t topology,
  *
  * The topology \p topology does not necessarily have to match the current
  * machine. For instance the topology may be an XML import of a remote host.
- * I/O devices detection and the OpenCL component must be enabled in the topology.
+ * I/O devices detection and the GL component must be enabled in the topology.
  *
  * \note The corresponding PCI device object can be obtained by looking
  * at the OS device parent object.
@@ -92,7 +92,7 @@ hwloc_gl_get_display_osdev_by_name(hwloc_topology_t topology,
         return NULL;
 }
 
-/** \brief Get the OpenCL display port and device corresponding to the given hwloc OS object.
+/** \brief Get the OpenGL display port and device corresponding to the given hwloc OS object.
  *
  * Return the OpenGL display port (server) in \p port and device (screen)
  * in \p screen that correspond to the given hwloc OS device object.
@@ -100,7 +100,7 @@ hwloc_gl_get_display_osdev_by_name(hwloc_topology_t topology,
  *
  * The topology \p topology does not necessarily have to match the current
  * machine. For instance the topology may be an XML import of a remote host.
- * I/O devices detection and the OpenCL component must be enabled in the topology.
+ * I/O devices detection and the GL component must be enabled in the topology.
  */
 static __hwloc_inline int
 hwloc_gl_get_display_by_osdev(hwloc_topology_t topology __hwloc_attribute_unused,
