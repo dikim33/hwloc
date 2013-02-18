@@ -67,7 +67,7 @@ hwloc_gl_get_display_osdev_by_port_device(hwloc_topology_t topology,
  * OpenGL display given by name.
  *
  * Return the OS device object describing the OpenGL display
- * whose name is \p name, built as :<port>.<device>.
+ * whose name is \p name, built as ":port.device" such as ":0.0" .
  * Return NULL if there is none.
  *
  * The topology \p topology does not necessarily have to match the current
