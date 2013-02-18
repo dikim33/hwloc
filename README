@@ -29,10 +29,12 @@ hwloc supports the following operating systems:
   * Solaris
   * AIX
   * Darwin / OS X
-  * FreeBSD and its variants (such as kFreeBSD/GNU), and NetBSD
+  * FreeBSD and its variants (such as kFreeBSD/GNU)
+  * NetBSD
   * OSF/1 (a.k.a., Tru64)
   * HP-UX
   * Microsoft Windows
+  * IBM BlueGene/Q Compute Node Kernel (CNK)
 
 Since it uses standard Operating System information, hwloc's support is mostly
 independant from the processor type (x86, powerpc, ...) and just relies on the
@@ -108,8 +110,13 @@ The hwloc core may also benefit from the following development packages:
 
   * libnuma for memory binding and migration support on Linux (numactl-devel or
  libnuma-dev package).
-  * pciutils (libpci) for I/O discovery. The relevant development package is
- usually pciutils-devel or libpci-dev.
+  * hwloc can use one of two different libraries for I/O device discovery:
+
+  1. libpciaccess (BSD). The relevant development package is usually
+     libpciaccess-devel or libpciaccess-dev.
+  2. libpci, from the pciutils package (GPL). The relevant development
+     package is usually pciutils-devel or libpci-dev.
+
   * the AMD OpenCL implementation for OpenCL device discovery.
   * the NVIDIA CUDA Toolkit for CUDA device discovery.
   * the NVIDIA Tesla Development Kit for NVML device discovery.
@@ -119,9 +126,26 @@ The hwloc core may also benefit from the following development packages:
  from/to XML files for details. The relevant development package is usually
  libxml2-devel or libxml2-dev.
 
-libpci and libxml2 support may be statically built inside the main hwloc
-library, or as separate dynamically-loaded plugins (see the Components and
-plugins section).
+PCI and XML support may be statically built inside the main hwloc library, or
+as separate dynamically-loaded plugins (see the Components and plugins
+section).
+
+Note that because of the possibility of GPL taint (remember that hwloc is
+BSD-licensed), hwloc's configure script will prefer libpciaccess to the
+pciutils package. Indeed, if libpciaccess is not found, hwloc will not use
+pciutils unless it is specifically requested via the --enable-libpci flag is
+provided.
+
+Also note that if you install supplemental libraries in non-standard locations,
+hwloc's configure script may not be able to find them without some help. You
+may need to specify additional CPPFLAGS, LDFLAGS, or PKG_CONFIG_PATH values on
+the configure command line.
+
+For example, if libpciaccess was installed into /opt/pciaccess, hwloc's
+configure script may not find it be default. Try adding PKG_CONFIG_PATH to the
+./configure command line, like this:
+
+./configure PKG_CONFIG_PATH=/opt/pciaccess/lib/pkgconfig ...
 
 CLI Examples
 
@@ -689,5 +713,5 @@ Make sure to have had a look at those too!
 
 -------------------------------------------------------------------------------
 
-Generated on Mon Dec 31 2012 09:57:56 for Hardware Locality (hwloc) by   
+Generated on Mon Feb 18 2013 21:56:49 for Hardware Locality (hwloc) by   
 doxygen 1.8.2
