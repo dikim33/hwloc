@@ -1877,7 +1877,7 @@ enabled for the current topology.
  </dd>
 
 <dt>NVIDIA displays</dt>
- <dt>
+ <dd>
   hwloc/gl.h enables interoperability with NVIDIA displays
   using the NV-CONTROL X extension (NVCtrl library).
   If I/O device discovery is enabled, it may return the OS device
