@@ -60,17 +60,22 @@ int main(void)
       osdev = hwloc_get_obj_by_type(topology, HWLOC_OBJ_OS_DEVICE, i);
 
       backend = hwloc_obj_get_info_by_name(osdev, "Backend");
-      err = strcmp(backend, "GL");
-      assert(!err);
       model = hwloc_obj_get_info_by_name(osdev, "GPUModel");
 
       err = hwloc_gl_get_display_by_osdev(topology, osdev, &port, &device);
       if (!err) {
+	err = strcmp(backend, "GL");
+	assert(!err);
 	if (!firstgpu)
 	  firstgpu = osdev;
 	lastgpu = osdev;
 	printf("GPU #%u (%s) is connected to DISPLAY:%u.%u \n", nr_gpus, model, port, device);
 	nr_gpus++;
+      } else {
+	if (backend) {
+	  err = strcmp(backend, "GL");
+	  assert(err);
+	}
       }
     }
 
