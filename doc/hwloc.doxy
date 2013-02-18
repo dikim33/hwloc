@@ -2180,7 +2180,7 @@ environment variable (see \ref envvar).
  privileges.
  <b>It may be built as a plugin</b>.
 </dd>
-<dt>gl</gl>
+<dt>gl</dt>
 <dd>
  Probing the NV-CONTROL X extension (NVCtrl library) creates OS
  device objects such as <em>:0.0</em> corresponding to NVIDIA
