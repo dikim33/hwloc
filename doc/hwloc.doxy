@@ -1878,8 +1878,8 @@ enabled for the current topology.
 
 <dt>NVIDIA displays</dt>
  <dt>
-  hwloc/gl.h enables interoperability with displays using the
-  NVIDIA NV-CONTROL X extension (NVCtrl library).
+  hwloc/gl.h enables interoperability with NVIDIA displays
+  using the NV-CONTROL X extension (NVCtrl library).
   If I/O device discovery is enabled, it may return the OS device
   hwloc object that corresponds to a given display
   given as a name such as <em>:0.0</em>
@@ -2182,9 +2182,11 @@ environment variable (see \ref envvar).
 </dd>
 <dt>gl</gl>
 <dd>
- Probing the NV-CONTROL X extension creates OS device objects
- such as <em>:0.0</em> that are useful for graphical applications
- that need to place computation and/or data near a rendering GPU.
+ Probing the NV-CONTROL X extension (NVCtrl library) creates OS
+ device objects such as <em>:0.0</em> corresponding to NVIDIA
+ displays.
+ They are useful for graphical applications that need to place
+ computation and/or data near a rendering GPU.
  <b>It may be built as a plugin</b>.
 </dd>
 <dt>synthetic</dt>

@@ -5,12 +5,12 @@
  */
 
 /** \file
- * \brief Macros to help interaction between hwloc and the OpenGL interface.
+ * \brief Macros to help interaction between hwloc and OpenGL displays.
  *
- * Applications that use both hwloc and OpenGL may want to
- * include this file so as to get topology information for OpenGL displays.
+ * Applications that use both hwloc and OpenGL may want to include
+ * this file so as to get topology information for OpenGL displays.
  *
- * Only the NVIDIA device locality information is currently available,
+ * Only the NVIDIA display locality information is currently available,
  * using the NV-CONTROL X11 extension and the NVCtrl library.
  */
 
@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 
-/** \defgroup hwlocality_gl OpenGL Specific Functions
+/** \defgroup hwlocality_gl OpenGL display specific functions
  * @{
  */
 
@@ -92,7 +92,8 @@ hwloc_gl_get_display_osdev_by_name(hwloc_topology_t topology,
         return NULL;
 }
 
-/** \brief Get the OpenGL display port and device corresponding to the given hwloc OS object.
+/** \brief Get the OpenGL display port and device corresponding
+ * to the given hwloc OS object.
  *
  * Return the OpenGL display port (server) in \p port and device (screen)
  * in \p screen that correspond to the given hwloc OS device object.
