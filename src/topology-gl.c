@@ -58,7 +58,7 @@ hwloc_gl_query_devices(struct hwloc_gl_backend_data_s *data)
       continue;
     }
 
-    for (j = 0; j < (unsigned) ScreenCount(display); j++) {
+    for (j = 0; j < (unsigned) ScreenCount(display) && j < HWLOC_GL_SCREEN_MAX; j++) {
       struct hwloc_gl_display_info_s *info = &data->display[data->nr_display];
       const int screen = j;
       unsigned int *ptr_binary_data;
